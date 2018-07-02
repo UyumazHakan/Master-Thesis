@@ -10,10 +10,10 @@
 % TODO: change thesis information
 \newcommand*{\getUniversity}{Technische Universität München}
 \newcommand*{\getFaculty}{Department of Informatics}
-\newcommand*{\getTitle}{Thesis title}
+\newcommand*{\getTitle}{Generic and Practical Platform for Web Services Widely Used in Internet of Things}
 \newcommand*{\getTitleGer}{Titel der Abschlussarbeit}
-\newcommand*{\getAuthor}{Author}
-\newcommand*{\getDoctype}{Thesis type (Bachelor's Thesis in Informatics, Master's Thesis in Robotics, \ldots)}
+\newcommand*{\getAuthor}{Hakan Uyumaz}
+\newcommand*{\getDoctype}{Master's Thesis in Informatics}
 \newcommand*{\getSupervisor}{Supervisor}
 \newcommand*{\getAdvisor}{Advisor}
 \newcommand*{\getSubmissionDate}{Submission date}
@@ -28,7 +28,7 @@
 
 \frontmatter{}
 
-\input{pages/title}
+%\input{pages/title}
 \input{pages/disclaimer}
 \input{pages/acknowledgements}
 \input{pages/abstract}
@@ -47,6 +47,9 @@
 \listoffigures{}
 \listoftables{}
 \microtypesetup{protrusion=true}
-\printbibliography{}
+
+\bibliography{bibliography}
+
+\bibliographystyle{ieeetr}
 
 \end{document}
