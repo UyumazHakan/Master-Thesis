@@ -16,10 +16,37 @@ In most cases, the applications have similar capability needs in their required 
 \end{itemize}
  Furthermore, they may need to support multiple protocols at the same time for accessing and modifying same data since these web services are used by different platforms. Although multiple protocols are used at the same time, choice of protocols is always similar. 
 
- To receive data from a constrained network and/or node, Constrained Application Protocol (CoAP) is preferred. as their web-services such as CoAP, MQTT and HTTP with REST architecture. 
+ Message Queue Telemetry Transport (MQTT), Constrained Application Protocol (CoAP) and Hypertext Transfer Protocol (HTTP) in Representational State Transfer (REST) architectural style are the most used protocols in area of IoT \cite{8246418,8070130}. Machine to machine (M2M) communications between wireless sensor network nodes and and web application server are done through CoAP since they are resource-constained devices in terms of power source, memory and network availability and CoAP is designed to be used in these kinds of constrained networks. If a node need to send a message to multiple different nodes at the same time, MQTT is preffered since it is lightweight publish-subscribe based messaging protocol and supports one-to-many communication \cite{mqtt}. Devices such as smart phones and personal computers which are not in a constrained network uses HTTP in a RESTful way to monitor the gathered data and/or to start events.
 
- The common trait of all these protocols is being highly generic to support any needs ofthe developer on their communication through the internet. On the other hand, the required functionalities of web services that are used in are of IoT are diverged from each other with only little differences. Interoperability of sensors, actuators, machine to machine (M2M) communcation and context-aware services is the main concern of IoT \cite{6651222}. Therefore, a Platform as a Service can be defined to develop own custom web services in IoT domain by using predefined and parameterized building blocks in order to give developers a fast and practical environment to work on.
+ The common trait of all these protocols is being highly generic to support any needs ofthe developer on their communication through the internet. On the other hand, the required functionalities of web services that are used in are of IoT are diverged from each other with only little differences. Interoperability of sensors, actuators, machine to machine (M2M) communcation and context-aware services is the main concern of IoT \cite{6651222}. Therefore, a Platform as a Service (PaaS) can be defined to develop own custom web services in IoT domain by using predefined and parameterized building blocks in order to give developers a fast and practical environment to work on.
 
 \section{Proposed Solution}
 
+While designing web services that will be used in a IoT project, some designconcerns must be taken into account by the developer. The techniques and architure to enable communication between all neccessary nodes, format for data that will be stored, how and when data will be served can be considered the main design concerns \cite{6651222}. After design phase of the system has been finished, the design shall be easily translated to make web services up and running. To achieve a PaaS that enables fast, practical, accessible and generic environment that can support any IoT developer, different subsystems that handles different objectives in the system must be defined.
 
+\subsection{Data Manager}
+
+Any data that will used by the web services that is defined by the system user are stored as ontologies in the system. These ontologies store different types of entites as following:
+
+\begin{itemize}
+  \item Types
+  \item Figures
+  \item Objects
+  \item Groups
+  \item Rules
+\end{itemize}
+
+Each type has a name and abstract meta-data about data fields such as requirement, name and type which will be used while defining objects. A type can be inherited by another types and figures or can be used to define objects. Figures are just like types, but, with predefined data fields. Objects that are defined by using a figure cannot alter these predefined data fields other than the one defined in figures. Each figure cannot be inherited by a type and must inherit from a type. Each object are defined by using a type or a figure, represents virtual state of real world and has concrete data in its data fields. Groups are used to cluster objects and apply rules on objects as a whole. Rules %TODO
+
+Any ontology owned by a system user can be shared with other system users to work collaboratively. Nevertheless, the system users that have no access to an ontology are not allowed to view or modify the ontology. As a result, protection of business logic and private data will be preserved. Isolation management of ontologies is handled by the data manager. 
+
+The created ontologies can only be organized and extended by the system user. Any rules or object in an ontology will not function until the ontology is matched with a web service using the web service manager. Thus, any ontology that is not matched with any web service is considered offline and act like static data in the system.
+
+To enable reusablity of an ontology, they are able to matched with multiple web services and any changes made using a web service will be available on other matched web services.
+
+
+\subsection{Rule Manager}
+
+\subsection{Web Service Manager}
+
+\subsection{User Manager}
