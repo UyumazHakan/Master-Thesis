@@ -26,7 +26,9 @@ While designing web services that will be used in a IoT project, some designconc
 
 \subsection{Data Manager}
 
-Any data that will used by the web services that is defined by the system user are stored as ontologies in the system. These ontologies store different types of entites as following:
+All the data that is defined by the sytem user and the web service users is handled by data manager and its components. Data manager uses Elasticsearch to store this data since its scability, speed, resiliency, flexibility, powerful support to time-series and unstructured data and queries \cite{elastic, elastic_time}.
+
+Any data that will used by the web services that is defined by the system user are stored as ontologies in the system. These ontologies store different types of components as following:
 
 \begin{itemize}
   \item Types
@@ -36,17 +38,42 @@ Any data that will used by the web services that is defined by the system user a
   \item Rules
 \end{itemize}
 
-Each type has a name and abstract meta-data about data fields such as requirement, name and type which will be used while defining objects. A type can be inherited by another types and figures or can be used to define objects. Figures are just like types, but, with predefined data fields. Objects that are defined by using a figure cannot alter these predefined data fields other than the one defined in figures. Each figure cannot be inherited by a type and must inherit from a type. Each object are defined by using a type or a figure, represents virtual state of real world and has concrete data in its data fields. Groups are used to cluster objects and apply rules on objects as a whole. Rules %TODO
+The data model of a ontology is defined by types and figures and the actual data is defined by objects and groups. Each type has a name and abstract meta-data about data fields such as requirement, name and type which will be used while defining objects. A type can be inherited by another types and figures or can be used to define objects. Figures are just like types, but, with predefined data fields. Objects that are defined by using a figure cannot alter these predefined data fields other than the value given in figures. Each figure cannot be inherited by a type and must inherit from a type. Each object are defined by using a type or a figure, represents virtual state of real world object and has concrete data and data series in its fields. To state a property or the state of the object, data fields can be used. However, data series are preffered to store collection of the same type of data of the same object such as timestamped data of hourly energy consumption of a device. Groups are used to cluster objects and apply rules on objects as a cluster. Rules are chains of function blocks to apply on objects or groups when an event occurs. They are stored in ontologies with other components by data manager. However, processing and handling of them are done by rule manager. In the subsection \ref{ss:rule_manager}, the detailed information about rule structure will be given.
 
 Any ontology owned by a system user can be shared with other system users to work collaboratively. Nevertheless, the system users that have no access to an ontology are not allowed to view or modify the ontology. As a result, protection of business logic and private data will be preserved. Isolation management of ontologies is handled by the data manager. 
 
 The created ontologies can only be organized and extended by the system user. Any rules or object in an ontology will not function until the ontology is matched with a web service using the web service manager. Thus, any ontology that is not matched with any web service is considered offline and act like static data in the system.
 
-To enable reusablity of an ontology, they are able to matched with multiple web services and any changes made using a web service will be available on other matched web services.
+To enable reusablity of an ontology, they can be edited, cloned or taken offline. Moreover, they can be matched with multiple web services and any changes made using a web service will be available on other matched web services. Therefore, the data will be available for the user defined system from any kind of network.
 
+The whole ontology can be defined in practical and easy-to-learn user interface (UI) of the web application. However, the power users who want to transfer existing data models as ontologies to the system with help of a script or need to create a similar ontology with the small but core changes which would lead the loss of data when is done in UI can use Internet of Things Easy Query Language (IoTeQL) that is designed for querying the ontology model and enables all functionality of the ontology model for the needs of the user in a practical way. All queries on the ontologies are evaluated by the query engine component of data manager. The detailed information and syntax of IoTeQL can be found in upcoming chapters. %TODO Chapter 
 
 \subsection{Rule Manager}
+\label{ss:rule_manager}
+
+\begin{itemize}
+  \item Sink
+
+  \item Source
+  \item Mapper
+  \item Reducer
+  \item Filter
+  \item Zipper
+  \item Forwarder
+  \item Event
+  \item Branch
+  \item Function Blocks
+\end{itemize}
+
+\subsection{User Manager}
+
+The web services that are defined by the system user may have public or private endpoints. To be able to reach the private endpoints, the web service user must have correct access rights. User pools can be defined by the system user to manage access rights to private endpoints of the web services. The authorization rights, the user groups with assigned authorization rights and users which belong to one or more user groups and have personal information. 
+
+The reason for to keep keep the web services and the user pools separate is to escalate the reusablity of the same user pool. The system user may want to introduce new web services to his/her own system. In such a case, it would be undesirable for the web service users to create new accounts to use new web service. Therefore, using the same user pool in both web services would be ideal. 
+
+The new user pools can be created and managed through the web application. The endpoints of the REST API of the user pool are also provided to the system user. With help of these endpoints, they can integrate user creation and modification functions for the users in different user groups to their own system.
+
 
 \subsection{Web Service Manager}
 
-\subsection{User Manager}
+The web service manager is the backbone of all the system which integrates and manages interoperability of all subsystems. 
