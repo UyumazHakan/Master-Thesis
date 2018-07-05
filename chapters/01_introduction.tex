@@ -38,7 +38,7 @@ Any data that will used by the web services that is defined by the system user a
   \item Rules
 \end{itemize}
 
-The data model of a ontology is defined by types and figures and the actual data is defined by objects and groups. Each type has a name and abstract meta-data about data fields such as requirement, name and type which will be used while defining objects. A type can be inherited by another types and figures or can be used to define objects. Figures are just like types, but, with predefined data fields. Objects that are defined by using a figure cannot alter these predefined data fields other than the value given in figures. Each figure cannot be inherited by a type and must inherit from a type. Each object are defined by using a type or a figure, represents virtual state of real world object and has concrete data and data series in its fields. To state a property or the state of the object, data fields can be used. However, data series are preffered to store collection of the same type of data of the same object such as timestamped data of hourly energy consumption of a device. Groups are used to cluster objects and apply rules on objects as a cluster. Rules are chains of function blocks to apply on objects or groups when an event occurs. They are stored in ontologies with other components by data manager. However, processing and handling of them are done by rule manager. In the subsection \ref{ss:rule_manager}, the detailed information about rule structure will be given.
+The data model of a ontology is defined by types and figures and the actual data is defined by objects and groups. Each type has a name and abstract meta-data about data fields such as requirement, name and type which will be used while defining objects. A type can be inherited by another types and figures or can be used to define objects. Figures are just like types, but, with predefined data fields. Objects that are defined by using a figure cannot alter these predefined data fields other than the value given in figures. Each figure cannot be inherited by a type and must inherit from a type. Each object are defined by using a type or a figure, represents virtual state of real world object and can have concrete data, data series or rules that are defined in type or figure the object inherits and return on-time calculated value in its fields. To state a property or the state of the object, data fields can be used. However, data series are preffered to store collection of the same type of data of the same object such as timestamped data of hourly energy consumption of a device. Groups are used to cluster objects and apply rules on objects as a cluster. Rules are chains of function blocks to apply on objects or groups when an event occurs. They are stored in ontologies with other components by data manager. However, processing and handling of them are done by rule manager. In the subsection \ref{ss:rule_manager}, the detailed information about rule structure will be given.
 
 Any ontology owned by a system user can be shared with other system users to work collaboratively. Nevertheless, the system users that have no access to an ontology are not allowed to view or modify the ontology. As a result, protection of business logic and private data will be preserved. Isolation management of ontologies is handled by the data manager. 
 
@@ -46,24 +46,28 @@ The created ontologies can only be organized and extended by the system user. An
 
 To enable reusablity of an ontology, they can be edited, cloned or taken offline. Moreover, they can be matched with multiple web services and any changes made using a web service will be available on other matched web services. Therefore, the data will be available for the user defined system from any kind of network.
 
-The whole ontology can be defined in practical and easy-to-learn user interface (UI) of the web application. However, the power users who want to transfer existing data models as ontologies to the system with help of a script or need to create a similar ontology with the small but core changes which would lead the loss of data when is done in UI can use Internet of Things Easy Query Language (IoTeQL) that is designed for querying the ontology model and enables all functionality of the ontology model for the needs of the user in a practical way. All queries on the ontologies are evaluated by the query engine component of data manager. The detailed information and syntax of IoTeQL can be found in upcoming chapters. %TODO Chapter 
+The whole ontology can be defined in practical and easy-to-learn user interface (UI) of the web application. However, the power users who want to transfer existing data models as ontologies to the system with help of a script, to modify the ontology components that cannot be modified by the rules such as creating or removing rules with their own system or need to create a similar ontology with the small but core changes which would lead the loss of data when is done in UI can use Internet of Things Easy Query Language (IoTeQL) that is designed for querying the ontology model and enables all functionality of the ontology model for the needs of the user in a practical way. All queries on the ontologies are evaluated by the query engine component of data manager. The detailed information and syntax of IoTeQL can be found in upcoming chapters. %TODO Chapter 
 
 \subsection{Rule Manager}
 \label{ss:rule_manager}
 
-\begin{itemize}
-  \item Sink
+To build business logic on the ontologies, the rules, which are if-then form decision making tools, must be defined in the system. The rules functions like chain of blocks, which each takes small part while interepreting the logic. These blocks sends objects in JavaScript Object Notation (JSON) format to each other using their input and output ports. There are different types of blocks that each has different function in the rule handling. In the following part, the blocks and their respective descriptions can be found.
 
-  \item Source
-  \item Mapper
-  \item Reducer
-  \item Filter
-  \item Zipper
-  \item Forwarder
-  \item Event
-  \item Branch
-  \item Function Blocks
-\end{itemize}
+\begin{description}
+  \item [Nodes] are used to retrieve data from other components of the ontology. They can represent a type, a figure, an object or values in the data fields of the object. They are also directly accesible by the endpoints of a web service.
+  \item [Queries] are used to create a new object or to modify the existing ones. They can match with the objects as whole or as part of them and outputs state of whole object. 
+  \item [Sinks] are also used to connect the rules to the web services. They are the exit points for the data to be sent through the web services.
+  \item [Sources] are used to connect the rules to the web services. They are the entry points for the data received from the web services.
+  \item [Events] are used to run the rules when a condition satisfied. This condition can be satisfied by time or other rule blocks. If the condition is time based, they can run their respective rules with predefined value output in scheduled times. If it is expected to triggered by other function blocks, they must have a condition to apply on input and outputs input to its target when the condition is satisfied.
+  \item [Mappers] have a lambda function to apply every single elements of the input and output elements which the function returns.
+  \item [Reducers] have a lambda function which does rolling computation to apply to sequential pairs of data series.
+  \item [Filters] have a lambda function which returns a boolean type value. They apply the lambda function on elements in the input and output elements which the function returns true.
+  \item [Zippers] are used to merge one than one inputs into a single output.
+  \item [Branchs] have more than one output ports and each output port have their respective condition. They forward their input to the output port or ports that conditions are satisfied.
+  \item [Functions] are used to do customized modification, when capabilities of other blocks are not enough, on the input in a sequential programming way and output result.
+\end{description}
+
+ A web service triggers respective source in a rule on each request and returns the value received from sinks if it has one. The only way to run a rule is triggering its starting sink or event. Every rule block can have only one output port and can have more than one input ports except sinks and sources and are reusable with their target blocks by referencing them while creating a rule. With the power of resuable blocks, the system user will not need to implement the rule parts that are implemented in otther rules.
 
 \subsection{User Manager}
 
@@ -71,9 +75,17 @@ The web services that are defined by the system user may have public or private 
 
 The reason for to keep keep the web services and the user pools separate is to escalate the reusablity of the same user pool. The system user may want to introduce new web services to his/her own system. In such a case, it would be undesirable for the web service users to create new accounts to use new web service. Therefore, using the same user pool in both web services would be ideal. 
 
-The new user pools can be created and managed through the web application. The endpoints of the REST API of the user pool are also provided to the system user. With help of these endpoints, they can integrate user creation and modification functions for the users in different user groups to their own system.
+The new user pools can be created and managed through the web application. The endpoints of the REST API of the user pool are also provided to the system user. With help of these endpoints, they can integrate user creation and modification functions for their users in different user groups to their own system. 
+
+The user pools can also different user confirmation level. This confirmation levels defines when the web services user needs to confirm they agree to use of their data in the web services. The objects that are owned the web service user cannot be accessed with the web services on the ontology unless they give the permission. The confirmation to use the user information in any web services that is created by the owner at the creation of the web services user of the user or the confirmation need before start of using of any individual web services can be set by the system user for each user pool. The ease of handling of user data can be achieved by using needed user confirmation level for the platform users who are building web services in different countries with different user data protection regulations.
 
 
 \subsection{Web Service Manager}
 
-The web service manager is the backbone of all the system which integrates and manages interoperability of all subsystems. 
+The web service manager is the backbone of all the system which integrates and manages interoperability of all subsystems.  
+
+While creating a web service using web service manager, the system user must select which an ontology and an user pool will be used for the web service. The decision for protocol that the web service will be built on must be made before the start of the creation of the endpoints. 
+
+The access permission of the user groups for the endpoints, the protocol specific configuration of the endpoints and the matching between the endpoints and the sources or the nodes in the ontology must also be defined by the system user during the creation of the each endpoint. In protocols with publish-subscribe mechanism, sinks must be matched with topics. Thus, the web service can listen for request in topics which are matched with source and send response in topics which are matched with responses.
+
+When a web service user make a request to the web service built-on protocols that has no publish-subscribe mechanism, the manager checks whether the web service user is in required groups and has been confirmed to be used in the web services as the user confirmation level of the user pool required. The web services with publish-subscribe mechanism make these checks while the web service user is subscribing a topic. Unless any other specification is made by the system user, web service manager will merge the user information, the query and the parameters sent by the web service user into one JSON object pass it to data manager to be handled by rule engine and returns the merged result in the all reached sinks. 
