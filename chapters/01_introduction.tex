@@ -4,9 +4,9 @@
 \chapter{Introduction}\label{chapter:introduction}
 
 \section{Background}
-Internet of Things (IoT) has become an emerging technology with the power of low priced computational units and cloud technology. There are thousands of different examples in the real world which are aiming at both end-users and industry. To achieve such applications or prototypes of these applications, hundreds or thousands of working hours should be spent by software developers to implement both embedded software and web services to work for their needs. 
+Internet of Things (IoT) has become an emerging technology with the power of low priced computational units and cloud technology. There are thousands of different examples in the real world which are aiming at both the end-users and the industry. To achieve such applications or prototypes of these applications, hundreds or thousands of working hours should be spent by software developers to implement both embedded software and web services to serve for their needs. 
 
-In most cases, the applications have similar capability needs in their required web-services with some little customization. The most basic capabilities that any web services should have can be listed as;
+In most cases, the applications have similar capability needs in their required web-services with some little customization. The most basic capabilities, which any web services should have, can be listed as;
 \begin{itemize}
   \item Receiving data,
   \item Serving data,
@@ -14,11 +14,11 @@ In most cases, the applications have similar capability needs in their required 
   \item User authentication and authorization,
   \item Data isolation.
 \end{itemize}
- Furthermore, they may need to support multiple protocols at the same time for accessing and modifying the same data since these web services are used by different platforms. Although multiple protocols are used at the same time, choice of protocols is always similar. 
+ Furthermore, they may need to support multiple protocols at the same time for accessing and modifying the same data since these web services should be accessible by different platforms. Although multiple protocols are used at the same time, the choice of protocols is always similar. 
 
- Message Queue Telemetry Transport (MQTT), Constrained Application Protocol (CoAP) and Hypertext Transfer Protocol (HTTP) in Representational State Transfer (REST) architectural style are the most used protocols in the area of IoT \cite{8246418,8070130}. Machine to machine (M2M) communications between wireless sensor network nodes and web application server are done through CoAP since they are resource-constrained devices in terms of power source, memory, and network availability and CoAP is designed to be used in these kinds of constrained networks. If a node needs to send a message to multiple different nodes at the same time, MQTT is preferred since it is lightweight publish-subscribe based messaging protocol and supports one-to-many communication \cite{mqtt}. Devices such as smartphones and personal computers which are not in a constrained network use HTTP in a RESTful way to monitor the gathered data and/or to start events.
+ Message Queue Telemetry Transport (MQTT), Constrained Application Protocol (CoAP) and Hypertext Transfer Protocol (HTTP) in Representational State Transfer (REST) architectural style are the most used protocols in the area of IoT \cite{8246418,8070130}. Machine to machine (M2M) communications between wireless sensor network nodes and web application server are done through CoAP since they are resource-constrained devices in terms of the power source, the memory, and the network availability and CoAP is designed to be used in these kinds of constrained networks. If a node needs to send a message to multiple different nodes at the same time, MQTT is preferred since it is a lightweight publish-subscribe based messaging protocol and supports one-to-many communication \cite{mqtt}. Devices such as smartphones and personal computers which are not in a constrained network use HTTP in a RESTful way to monitor the gathered data and/or to start events.
 
- The common trait of all these protocols is being highly generic to support any needs of the developer on their communication through the internet. On the other hand, the required functionalities of web services that are used in are of IoT are diverged from each other with only a little difference. Interoperability of sensors, actuators, machine to machine (M2M) communication and context-aware services is the main concern of IoT \cite{6651222}. Therefore, a Platform as a Service (PaaS) can be defined to develop own custom web services in IoT domain by using predefined and parameterized building blocks in order to give developers a fast and practical environment to work on.
+ The common trait of all these protocols is being highly generic to support any needs of the developer on their communication through the internet. On the other hand, the required functionalities of web services that are used in the area of IoT diverge from each other with only a little difference. Interoperability of sensors, actuators, machine to machine (M2M) communication and context-aware services is the main concern of IoT \cite{6651222}. Therefore, a Platform as a Service (PaaS) can be defined to develop custom web services in IoT domain by using predefined and parameterized building blocks in order to give developers a fast and practical environment to work on.
 
 \section{Proposed Solution}
 
@@ -29,13 +29,16 @@ While designing web services that will be used in an IoT project, some design co
 M. G. Kibria et al. proposed that a semantic ontology which declares every device as objects on gateways can be used for energy efficiency \cite{7993747}. N. Lee and H. Lee also suggested an IoT service architecture provides services with an object gateway \cite{6884496}. Although device objectification is a good method to store data of the real world devices for IoT services; the management of read-write access to the objects, the evaluation of the gathered data and the methods for the service of these data are the topics need to be covered to build a generic and practical platform that serves any need of IoT. 
 
 
-To achieve a PaaS that enables a fast, practical, accessible and generic environment that can support any IoT developer, different subsystems that handle different objectives in the system must be defined. By having different subsystems,  isolation of information and a system that scales only its required subsystems can be succeeded. On the other hand, the challenge of interoperability between these subsystem derives. How to handle the interoperability challenges will be covered in the following chapters in details.
+To achieve a PaaS that enables a fast, practical, accessible and generic environment that can support any IoT developer, different subsystems that handle different objectives in the system must be defined. By having different subsystems,  isolation of information and a system that scales only its required subsystems can be succeeded. On the other hand, the challenge of interoperability between these subsystem derives. In figure \ref{fig:architecture}, the architectural design of the system is shown.
 
 \begin{figure}[htpb]
   \centering
   \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{figures/architectural_diagram.pdf}
   \caption[Platform Architecture]{The architectural diagram of the platform}\label{fig:architecture}
 \end{figure}
+
+Each of the subsystems; the user manager, the data manager, the rule manager and the web services manager are dockerized and hosted in different computing units in the cloud infrastructre. Since they are isolated and loosely coupled with each other, they can autoscale individually behind a load balancer and increase of the computational unit where there is needed can be achieved. Thus, the data manager will scale horizontally when number of queries is increased and the rule manager will scale horizontally when huge amount of scheduled rules is need to be handled at the same time. All of the subsystems can be accessed by their own application program interface (API) and the connector components of them act like adapter to interact with each other. Therefore, any change in any subsystem will not lead change in overall architecture. How to handle the interoperability challenges will be covered in the following chapters in details.
+
 
 \subsection{Data Manager}
 
