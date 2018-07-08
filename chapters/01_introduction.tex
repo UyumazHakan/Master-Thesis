@@ -26,16 +26,22 @@ In most cases, the applications have similar capability needs in their required 
 
 While designing web services that will be used in an IoT project, some design concerns must be taken into account by the developer. The techniques and architecture to enable communication between all necessary nodes, the format for data that will be stored, how and when data will be served can be considered the main design concerns \cite{6651222}. After the design phase of the system has been finished, the design shall be easily translated to make web services up and running. 
 
-M. G. Kibria et al. proposed that a semantic ontology which declares every device as objects on gateways can be used for energy efficiency \cite{7993747}. N. Lee and H. Lee also suggested an IoT service architecture provides services with an object gateway \cite{6884496}. Although device objectification to store data of the real world devices for IoT services; the management of read-write access to the objects, the evaluation of the gathered data and the methods for the service of these data are the topics need to be covered to build a generic and practical platform that serves any need of IoT. 
+M. G. Kibria et al. proposed that a semantic ontology which declares every device as objects on gateways can be used for energy efficiency \cite{7993747}. N. Lee and H. Lee also suggested an IoT service architecture provides services with an object gateway \cite{6884496}. Although device objectification is a good method to store data of the real world devices for IoT services; the management of read-write access to the objects, the evaluation of the gathered data and the methods for the service of these data are the topics need to be covered to build a generic and practical platform that serves any need of IoT. 
 
 
 To achieve a PaaS that enables a fast, practical, accessible and generic environment that can support any IoT developer, different subsystems that handle different objectives in the system must be defined. By having different subsystems,  isolation of information and a system that scales only its required subsystems can be succeeded. On the other hand, the challenge of interoperability between these subsystem derives. How to handle the interoperability challenges will be covered in the following chapters in details.
 
+\begin{figure}[htpb]
+  \centering
+  \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{figures/architectural_diagram.pdf}
+  \caption[Platform Architecture]{The architectural diagram of the platform}\label{fig:architecture}
+\end{figure}
+
 \subsection{Data Manager}
 
-All the data that is defined by the system user and the web service users is handled by the data manager and its components. Data manager uses Elasticsearch to store this data since its scalability, speed, resiliency, flexibility, powerful support to time-series and unstructured data and queries \cite{elastic, elastic_time}.
+All the data that is defined by the platform user and the web service users is handled by the data manager and its components. Data manager uses Elasticsearch to store this data since its scalability, speed, resiliency, flexibility, powerful support to time-series and unstructured data and queries \cite{elastic, elastic_time}.
 
-Any data that will be used by the web services that are defined by the system user are stored as ontologies in the system. These ontologies store different types of components as follows:
+Any data that will be used by the web services that are defined by the platform user are stored as ontologies in the platform. These ontologies store different types of components as follows:
 
 \begin{itemize}
   \item Types
@@ -47,18 +53,19 @@ Any data that will be used by the web services that are defined by the system us
 
 The data model of an ontology is defined by types and figures and the actual data is defined by objects and groups. Each type has a name and abstract meta-data about data fields such as requirement, name, and type which will be used while defining objects. A type can be inherited by another types and figures or can be used to define objects. Figures are just like types, but, with predefined data fields. Objects that are defined by using a figure cannot alter these predefined data fields other than the value given in figures. Each figure cannot be inherited by a type and must inherit from a type. Each object is defined by using a type or a figure, represents the virtual state of the real-world object and can have concrete data, data series or rules that are defined in type or figure the object inherits and return on-time calculated value in its fields. To state a property or the state of the object, data fields can be used. However, data series are preferred to store a collection of the same type of data of the same object such as timestamped data of hourly energy consumption of a device. Groups are used to cluster objects and apply rules on objects as a cluster. Rules are chains of function blocks to apply on objects or groups when an event occurs. They are stored in ontologies with other components by the data manager. However, processing and handling of them are done by the rule manager. In the subsection \ref{ss:rule_manager}, the detailed information about rule structure will be given.
 
-Any ontology owned by a system user can be shared with other system users to work collaboratively. Nevertheless, the system users that have no access to an ontology are not allowed to view or modify the ontology. As a result, protection of business logic and private data will be preserved. Isolation management of ontologies is handled by the data manager. 
+Any ontology owned by a platform user can be shared with other platform users to work collaboratively. Nevertheless, the platform users that have no access to an ontology are not allowed to view or modify the ontology. As a result, protection of business logic and private data will be preserved. Isolation management of ontologies is handled by the data manager. 
 
-The created ontologies can only be organized and extended by the system user. Any rules or object in an ontology will not function until the ontology is matched with a web service using the web service manager. Thus, an ontology that is not matched with any web service is considered offline and act like static data in the system.
+The created ontologies can only be organized and extended by the platform user. Any rules or object in an ontology will not function until the ontology is matched with a web service using the web service manager. Thus, an ontology that is not matched with any web service is considered offline and act like static data in the platform.
 
 To enable reusability of an ontology, they can be edited, cloned or taken offline. Moreover, they can be matched with multiple web services and any changes made using a web service will be available on other matched web services. Therefore, the data will be available for the user-defined system from any kind of network.
 
-The whole ontology can be defined in the practical and easy-to-learn user interface (UI) of the web application. However, the power users who want to transfer existing data models as ontologies to the system with help of a script, to modify the ontology components that cannot be modified by the rules such as creating or removing rules with their own system or need to create a similar ontology with the small but core changes which would lead the loss of data when is done in UI can use Internet of Things Easy Query Language (IoTeQL) that is designed for querying the ontology model and enables all functionality of the ontology model for the needs of the user in a practical way. All queries on the ontologies are evaluated by the query engine component of the data manager. The detailed information and syntax of IoTeQL can be found in upcoming chapters. %TODO Chapter 
+The whole ontology can be defined in the practical and easy-to-learn user interface (UI) of the web application. However, the power users who want to transfer existing data models as ontologies to the platform with help of a script, to modify the ontology components that cannot be modified by the rules such as creating or removing rules with their own system or need to create a similar ontology with the small but core changes which would lead the loss of data when is done in UI can use Internet of Things Easy Query Language (IoTeQL) that is designed for querying the ontology model and enables all functionality of the ontology model for the needs of the user in a practical way. All queries on the ontologies are evaluated by the query engine component of the data manager. The detailed information and syntax of IoTeQL can be found in upcoming chapters. %TODO Chapter 
+
 
 \subsection{Rule Manager}
 \label{ss:rule_manager}
 
-To build business logic on the ontologies, the rules, which are if-then form decision-making tools, must be defined in the system. The rules function like a chain of blocks, which each takes a small part while interpreting the logic. These blocks send objects in JavaScript Object Notation (JSON) format to each other using their input and output ports. There are different types of blocks that each has a different function in the rule handling. In the following part, the blocks and their respective descriptions can be found.
+To build business logic on the ontologies, the rules, which are if-then form decision-making tools, must be defined in the platform. The rules function like a chain of blocks, which each takes a small part while interpreting the logic. These blocks send objects in JavaScript Object Notation (JSON) format to each other using their input and output ports. There are different types of blocks that each has a different function in the rule handling. In the following part, the blocks and their respective descriptions can be found.
 
 \begin{description}
   \item [Nodes] are used to retrieve data from other components of the ontology. They can represent a type, a figure, an object or values in the data fields of the object. They are also directly accessible by the endpoints of a web service.
@@ -74,41 +81,25 @@ To build business logic on the ontologies, the rules, which are if-then form dec
   \item [Functions] are used to do a customized modification, when the capabilities of other blocks are not enough, on the input in a sequential programming way and output result.
 \end{description}
 
- A web service triggers respective source in a rule on each request and returns the value received from sinks if it has one. The only way to run a rule is triggering its starting sink or event. Every rule block can have only one output port and can have more than one input ports except sinks and sources and are reusable with their target blocks by referencing them while creating a rule. With the power of reusable blocks, the system user will not need to implement the rule parts that are implemented in other rules.
+ A web service triggers respective source in a rule on each request and returns the value received from sinks if it has one. The only way to run a rule is triggering its starting sink or event. Every rule block can have only one output port and can have more than one input ports except sinks and sources and are reusable with their target blocks by referencing them while creating a rule. With the power of reusable blocks, the platform user will not need to implement the rule parts that are implemented in other rules.
 
 \subsection{User Manager}
 
-The web services that are defined by the system user may have public or private endpoints. To be able to reach the private endpoints, the web service user must have correct access rights. User pools can be defined by the system user to manage access rights to private endpoints of the web services. The authorization rights, the user groups with assigned authorization rights and users which belong to one or more user groups and have personal information. 
+The web services that are defined by the platform user may have public or private endpoints. To be able to reach the private endpoints, the web service user must have correct access rights. User pools can be defined by the platform user to manage access rights to private endpoints of the web services. The authorization rights, the user groups with assigned authorization rights and users which belong to one or more user groups and have personal information. 
 
-The reason to keep the web services and the user pools separate is to escalate the reusability of the same user pool. The system user may want to introduce new web services to his/her own system. In such a case, it would be undesirable for the web service users to create new accounts to use a new web service. Therefore, using the same user pool in both web services would be ideal. 
+The reason to keep the web services and the user pools separate is to escalate the reusability of the same user pool. The platform user may want to introduce new web services to his/her own system. In such a case, it would be undesirable for the web service users to create new accounts to use a new web service. Therefore, using the same user pool in both web services would be ideal. 
 
-The new user pools can be created and managed through the web application. The endpoints of the REST API of the user pool are also provided to the system user. With help of these endpoints, they can integrate user creation and modification functions for their users in different user groups to their own system. 
+The new user pools can be created and managed through the web application. The endpoints of the REST API of the user pool are also provided to the platform user. With help of these endpoints, they can integrate user creation and modification functions for their users in different user groups to their own system. 
 
-The user pools can also different user confirmation level. These confirmation levels define when the web services user needs to confirm they agree to use of their data in the web services. The objects that are owned by the web service user cannot be accessed with the web services on the ontology unless they give the permission. The confirmation to use the user information in any web services that are created by the owner at the creation of the web services user of the user or the confirmation need before the start of using of any individual web services can be set by the system user for each user pool. The ease of handling of user data can be achieved by using needed user confirmation level for the platform users who are building web services in different countries with different user data protection regulations.
+The user pools can also different user confirmation level. These confirmation levels define when the web services user needs to confirm they agree to use of their data in the web services. The objects that are owned by the web service user cannot be accessed with the web services on the ontology unless they give the permission. The confirmation to use the user information in any web services that are created by the owner at the creation of the web services user of the user or the confirmation need before the start of using of any individual web services can be set by the platform user for each user pool. The ease of handling of user data can be achieved by using needed user confirmation level for the platform users who are building web services in different countries with different user data protection regulations.
 
 
 \subsection{Web Service Manager}
 
 The web service manager is the backbone of all the system which integrates and manages the interoperability of all subsystems.  
 
-While creating a web service using web service manager, the system user must select which an ontology and a user pool will be used for the web service. The decision for the protocol that the web service will be built on must be made before the start of the creation of the endpoints. 
+While creating a web service using web service manager, the platform user must select which an ontology and a user pool will be used for the web service. The decision for the protocol that the web service will be built on must be made before the start of the creation of the endpoints. 
 
-The access permission of the user groups for the endpoints, the protocol specific configuration of the endpoints and the matching between the endpoints and the sources or the nodes in the ontology must also be defined by the system user during the creation of each endpoint. In protocols with the publish-subscribe mechanism, sinks must be matched with topics. Thus, the web service can listen for requests in topics which are matched with source and send responses in topics which are matched with responses.
+The access permission of the user groups for the endpoints, the protocol specific configuration of the endpoints and the matching between the endpoints and the sources or the nodes in the ontology must also be defined by the platform user during the creation of each endpoint. In protocols with the publish-subscribe mechanism, sinks must be matched with topics. Thus, the web service can listen for requests in topics which are matched with source and send responses in topics which are matched with responses.
 
-When a web service user makes a request to the web service built-on protocols that have no publish-subscribe mechanism, the manager checks whether the web service user is in required groups and has been confirmed to be used in the web services as the user confirmation level of the user pool required. The web services with publish-subscribe mechanism make these checks while the web service user is subscribing to a topic. Unless any other specification is made by the system user, web service manager will merge the user information, the query and the parameters sent by the web service user into one JSON object pass it to data manager to be handled by rule engine and returns the merged result in the all reached sinks. 
-
-\begin{figure}[htpb]
-  \centering
-  % This should probably go into a file in figures/
-  \begin{tikzpicture}[node distance=6cm]
-    \node (Rule)  {Rule Manager};
-    \node (Data) [right of=Rule] {Data Manager};
-    \node (Web) [below of=Rule] {Web Service Manager};
-    \node (User) [right of=Web] {User Manager};
-
-    \draw[->]   (Rule) -- (Data);
-    \draw[->]   (Web) -- (Rule);
-    \draw[->]   (Web) -- (User);
-  \end{tikzpicture}
-  \caption[Subsystem Architecture]{The communication between the subsystems}\label{fig:subsystems}
-\end{figure}
+When a web service user makes a request to the web service built-on protocols that have no publish-subscribe mechanism, the manager checks whether the web service user is in required groups and has been confirmed to be used in the web services as the user confirmation level of the user pool required. The web services with publish-subscribe mechanism make these checks while the web service user is subscribing to a topic. Unless any other specification is made by the platform user, web service manager will merge the user information, the query and the parameters sent by the web service user into one JSON object pass it to data manager to be handled by rule engine and returns the merged result in the all reached sinks. 
