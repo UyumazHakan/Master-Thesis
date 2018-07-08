@@ -1,0 +1,178 @@
+$create[type]
+
+{
+	name: "Thermostat",
+	data_fields:
+	[
+		{
+			name: "name",
+			type: String,
+			required: true
+		},
+		{
+			name: "location",
+			type: GeoJSON/point
+		},
+		{
+			name: "time_started",
+			type: DateTime,
+			updatable: false,
+			inital: $time.now
+		},
+		{
+			name: "time_last_data_arrived",
+			type: DateTime
+		},
+		{
+			name: "is_broken",
+			type: Rule,
+			rule: $create[rule]
+			{
+				name: "is_broken",
+				initial: $create[node]
+				{
+					object: $self,
+					data_fields: 
+					[
+						"time_last_data_arrived"
+					],
+					target: $builtin[map](name: "is_time_passed")
+					{
+						parameters: [10800],
+						target: $create[sink]
+						{
+							name: "is_broken"
+						}
+					}
+
+				}
+			}
+		},
+		{
+			name: "time_alive",
+			type: Rule,
+			rule: $create[rule]
+			{
+				name: "time_alive",
+				initial: $create[node]
+				{
+					object: $self,
+					data_fields: 
+					[
+						"time_started"
+					],
+					target: $builtin[map](name: "time_difference")
+					{
+						target: $create[sink]
+						{
+							name: "time_alive"
+						}
+					}
+
+				}
+			}
+		},
+		{
+			name: "temperature_on_last_day_hourly",
+			type: [Float]
+		},
+		{
+			name: "temperature_on_last_month_daily",
+			type: [Float]
+		}
+
+	]
+}
+
+$create[object](name: "Thermostat")
+
+{
+	"name": "Foo Thermostat",
+	"location": 
+	{
+		"type": "Point",
+		"coordinates": [170,11]
+	}
+}
+
+$create[rule]
+
+{
+	name: "save_hourly_temp",
+	initial: $create[source]
+	{
+		name: "save_hourly_temp",
+		target: $builtin[query](name: "append")
+		{
+			parameters: 
+			{
+				"id": $input.device_id,
+				"field": "temperature_on_last_day_hourly"
+			},
+			target: $create[branch]
+			{
+				targets: 
+				[
+					{
+						condition: true,
+						target: $create[sink]
+						{
+							name: "save_hourly_temp"
+						}
+					},
+					{
+						condition: true,
+						target: $create[event]
+						{
+							name: "daily_ready",
+							condition: ($input.temperature_on_last_day_hourly.size >= 24)
+						}
+
+					}
+				]
+			}
+		}
+	}
+}
+
+$create[rule]
+
+{
+	name: "save_daily_temp",
+	initial: $defined[event](name: "daily_ready")
+	{
+		target: $create[branch]
+		{
+			targets: 
+			[
+				{
+					condition: true,
+					target: $builtin[reduce](average)
+					{
+						parameters: {"field": "temperature_on_last_day_hourly"}
+						target: $builtin[query](append)
+						{
+							parameters: 
+							{				
+								"field": "temperature_on_last_day_hourly",
+								"value": $input.temperature_on_last_day_hourly
+							},
+							target: $create[sink]
+							{
+								name: "daily_temp_saved"
+							}
+						}
+					}
+				},
+				{
+					condition: true,
+					target: $builtin[query](reset)
+					{
+						parameters: {"field": "temperature_on_last_day_hourly"}
+					}
+
+				}
+			]
+		} 
+	}
+}
