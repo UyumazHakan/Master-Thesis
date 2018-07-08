@@ -1,3 +1,13 @@
 /build/*
 !/build/main.pdf
 /logos/*.pdf
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.lof
+*.log
+*.lot
+*.out
+*.toc
+*.run.xml
