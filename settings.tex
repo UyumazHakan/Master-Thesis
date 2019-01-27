@@ -15,6 +15,8 @@
 \usepackage{booktabs}
 \usepackage[final]{microtype}
 \usepackage{caption}
+\usepackage{float}
+\usepackage{bussproofs}
 \usepackage[hidelinks]{hyperref} % hidelinks removes colored boxes around references and links
 
 \setkomafont{disposition}{\normalfont\bfseries} % use serif font for headings
@@ -53,4 +55,59 @@
   autogobble,
   keywordstyle=\bfseries\color{TUMBlue},
   stringstyle=\color{TUMAccentGreen}
+}
+
+\colorlet{punct}{red!60!black}
+\definecolor{background}{HTML}{EEEEEE}
+\definecolor{delim}{RGB}{20,105,176}
+\colorlet{numb}{magenta!60!black}
+\lstdefinelanguage{json}{
+    basicstyle=\normalfont\ttfamily,
+    numbers=left,
+    numberstyle=\scriptsize,
+    stepnumber=1,
+    numbersep=8pt,
+    showstringspaces=false,
+    breaklines=true,
+    frame=lines,
+    string=[s]{"}{"},
+    comment=[l]{:\ "},
+    backgroundcolor=\color{background},
+    literate=
+     *{0}{{{\color{numb}0}}}{1}
+      {1}{{{\color{numb}1}}}{1}
+      {2}{{{\color{numb}2}}}{1}
+      {3}{{{\color{numb}3}}}{1}
+      {4}{{{\color{numb}4}}}{1}
+      {5}{{{\color{numb}5}}}{1}
+      {6}{{{\color{numb}6}}}{1}
+      {7}{{{\color{numb}7}}}{1}
+      {8}{{{\color{numb}8}}}{1}
+      {9}{{{\color{numb}9}}}{1}
+      {true}{{{\color{TUMBlue}true}}}{1}
+      {false}{{{\color{TUMBlue}false}}}{1}
+      {:}{{{\color{punct}{:}}}}{1}
+      {,}{{{\color{punct}{,}}}}{1}
+      {\{}{{{\color{delim}{\{}}}}{1}
+      {\}}{{{\color{delim}{\}}}}}{1}
+      {[}{{{\color{delim}{[}}}}{1}
+      {]}{{{\color{delim}{]}}}}{1},
+}
+\definecolor{gray}{rgb}{0.4,0.4,0.4}
+\definecolor{darkblue}{rgb}{0.0,0.0,0.6}
+\definecolor{cyan}{rgb}{0.0,0.6,0.6}
+\lstdefinelanguage{XML}
+{
+    stepnumber=1,
+    backgroundcolor=\color{background},
+    frame=lines,
+    morestring=[b]",
+    morecomment=[s]{<?}{?>},
+    stepnumber=1,   
+    identifierstyle=\color{darkblue},
+    showstringspaces=false,
+    moredelim=[s][\color{gray}]{>}{<},
+    moredelim=[s][\color{red}]{\ }{=},
+    keywordstyle=\color{cyan},
+    morekeywords={xmlns,version}% list your attributes here
 }

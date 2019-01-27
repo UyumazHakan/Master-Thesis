@@ -1,0 +1,58 @@
+<owl:Class rdf:about="IoTOntology:Data">
+    <rdfs:subClassOf rdf:resource="IoTOntology:Object"/>
+</owl:Class>
+
+<owl:Class rdf:about="IoTOntology:Field"/>
+
+<owl:ObjectProperty rdf:about="IoTOntology:hasField">
+    <rdfs:domain rdf:resource="IoTOntology:Data"/>
+    <rdfs:range rdf:resource="IoTOntology:Field"/>
+</owl:ObjectProperty>
+
+<owl:Class rdf:about="IoTOntology:TemperatureData">
+    <rdfs:subClassOf rdf:resource="IoTOntology:Data"/>
+</owl:Class>
+
+<owl:Class rdf:about="IoTOntology:TemperatureField">
+    <rdfs:subClassOf rdf:resource="IoTOntology:Field"/>
+</owl:Class>
+
+<owl:ObjectProperty rdf:about="IoTOntology:hasTemperatureField">
+    <rdfs:subPropertyOf rdf:resource="IoTOntology:hasField"/>
+    <rdfs:domain rdf:resource="IoTOntology:Data"/>
+    <rdfs:range rdf:resource="IoTOntology:TemperatureField"/>
+</owl:ObjectProperty>
+
+<owl:Class rdf:about="IoTOntology:DataWithTemperatureField">
+    <owl:equivalentClass>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="IoTOntology:hasField"/>
+            <owl:someValuesFrom rdf:resource="IoTOntology:TemperatureField"/>
+        </owl:Restriction>
+    </owl:equivalentClass>
+    <rdfs:subClassOf rdf:resource="IoTOntology:TemperatureData"/>
+</owl:Class>
+
+<owl:Class rdf:about="IoTOntology:FlameData">
+    <rdfs:subClassOf rdf:resource="IoTOntology:Data"/>
+</owl:Class>
+
+<owl:Class rdf:about="IoTOntology:FlameField">
+    <rdfs:subClassOf rdf:resource="IoTOntology:Field"/>
+</owl:Class>
+
+<owl:ObjectProperty rdf:about="IoTOntology:hasFlameField">
+    <rdfs:subPropertyOf rdf:resource="IoTOntology:hasField"/>
+    <rdfs:domain rdf:resource="IoTOntology:Data"/>
+    <rdfs:range rdf:resource="IoTOntology:FlameField"/>
+</owl:ObjectProperty>
+
+<owl:Class rdf:about="IoTOntology:DataWithFlameField">
+    <owl:equivalentClass>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="IoTOntology:hasField"/>
+            <owl:someValuesFrom rdf:resource="IoTOntology:FlameField"/>
+        </owl:Restriction>
+    </owl:equivalentClass>
+    <rdfs:subClassOf rdf:resource="IoTOntology:FlameData"/>
+</owl:Class>
